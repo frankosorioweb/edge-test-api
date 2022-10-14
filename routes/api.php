@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Middleware\Authenticate;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -18,5 +19,11 @@ Route::get('/generateToken', function(Request $request) {
 
   return new JsonResponse([
     "api_key" => $api_key
+  ]);
+});
+
+Route::get('/paciente', function(Request $request) {
+  return new JsonResponse([
+    "Hello from /paciente [GET]"
   ]);
 });
