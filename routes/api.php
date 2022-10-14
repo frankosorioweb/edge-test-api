@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Middleware\Authenticate;
+use App\Http\Controllers\PacienteController;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -14,7 +15,7 @@ use Illuminate\Support\Facades\Route;
  * @param Request
  * @return JsonResponse
  */
-Route::get('/generateToken', function(Request $request) {
+Route::get('/generateToken', function (Request $request) {
   $api_key = base64_encode(getenv("API_KEY"));
 
   return new JsonResponse([
@@ -29,8 +30,7 @@ Route::get('/generateToken', function(Request $request) {
  * 
  * @return JsonResponse
  */
-Route::get('/paciente', function(Request $request) {
-  return new JsonResponse([
-    "Hello from /paciente [GET]"
-  ]);
-})->middleware(Authenticate::class);
+Route::get('/paciente/{id?}', [
+  PacienteController::class,
+  'findOneByIdOrGetAll'
+])->middleware(Authenticate::class);
