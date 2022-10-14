@@ -67,6 +67,18 @@ class PacienteController extends Controller
     );
   }
 
+
+  /**
+   * El endpoint /paciente [PUT] se utiliza para comunicarse con esta función y actuar de controlador
+   * 
+   * @return JsonResponse
+   */
+  public function update(Request $request) {
+    return new JsonResponse([
+      "msg" => "Hello from /paciente [PUT]"
+    ]);
+  }
+
   private function get_paciente_http_body(Request $request) {
     return Http::withBody(json_encode([
       "id" => intval($request->get('id')),
