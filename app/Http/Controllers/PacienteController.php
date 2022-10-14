@@ -21,6 +21,11 @@ class PacienteController extends Controller
   private $correo        = null;
   private $direccion     = null;
 
+  /**
+   * El endpoint /paciente/{id?} [GET] se utiliza para comunicarse con esta función y actuar de controlador
+   * 
+   * @return JsonResponse
+   */
   public function findOneByIdOrGetAll(Request $request)
   {
     // Contruimos la api de pacientes y realizamos la petición
@@ -34,6 +39,17 @@ class PacienteController extends Controller
     }
 
     return new JsonResponse($response->json());
+  }
+
+  /**
+   * El endpoint /paciente [POST] se utiliza para comunicarse con esta función y actuar de controlador
+   * 
+   * @return JsonResponse
+   */
+  public function addNew(Request $request) {
+    return new JsonResponse([
+      "msg" => "Hello from /paciente [POST]"
+    ]);
   }
 
   /**

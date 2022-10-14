@@ -34,3 +34,15 @@ Route::get('/paciente/{id?}', [
   PacienteController::class,
   'findOneByIdOrGetAll'
 ])->middleware(Authenticate::class);
+
+/**
+ * Este endpoint permite agregar un nuevo paciente, a partir de los datos enviados en el body del Request,
+ * se requiere deuna autenticación de tipo API KEY, el valor del token
+ * debe ser proporcionado mediante la clave api_key.
+ * 
+ * @return JsonResponse
+ */
+Route::post('paciente', [
+  PacienteController::class,
+  'addNew'
+])->middleware(Authenticate::class);
