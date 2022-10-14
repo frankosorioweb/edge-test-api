@@ -106,9 +106,32 @@ class PacienteController extends Controller
    */
   public function delete(Request $request)
   {
-    return new JsonResponse([
-      "msg" => "Hello from /paciente [DELETE]"
-    ]);
+    // Validamos que se ha enviado el id del usuario cómo parámetro en el path
+    $paciente_id = $request->id;
+    if(empty($paciente_id)) {
+      return $this->get_missing_paciente_id_parameter_response();
+    }
+
+    // Construimos la api de JSONPLACEHOLDER que utilizaremos para eliminar al usuario
+    $pacientes_api = $this->get_pacientes_api();
+    $paciente_delete_api = $pacientes_api . $paciente_id;
+
+    // Verificamos si el paciente a eliminar existe
+    $paciente_to_delete = Http::get($paciente_delete_api);
+    if(empty($paciente_to_delete->json())) {
+      return $this->get_paciente_not_found_response();
+    }
+
+    // Procedemos a ejecutar el request para dar de baja al usuario
+    if(Http::delete($paciente_delete_api)->status() === Response::HTTP_OK) {
+      return new JsonResponse([
+        "msg" => "El usuario se ha dado de baja con éxito"
+      ]);
+    } else {
+      return new JsonResponse([
+        "msg" => "Ocurrió un error al eliminar al usuario"
+      ], Response::HTTP_INTERNAL_SERVER_ERROR);
+    }
   }
 
   private function get_paciente_http_body(Request $request)
@@ -198,9 +221,15 @@ class PacienteController extends Controller
     ], Response::HTTP_BAD_REQUEST);
   }
 
-  function get_paciente_not_found_response() {
+  private function get_paciente_not_found_response() {
     return new JsonResponse([
       "msg" => "Paciente no encontrado"
     ], Response::HTTP_NOT_FOUND);
+  }
+
+  private function get_missing_paciente_id_parameter_response() {
+    return new JsonResponse([
+      "msg" => "No ha proporcionado el id del usuario"
+    ], Response::HTTP_BAD_REQUEST);
   }
 }
