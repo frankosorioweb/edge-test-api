@@ -73,13 +73,34 @@ class PacienteController extends Controller
    * 
    * @return JsonResponse
    */
-  public function update(Request $request) {
-    return new JsonResponse([
-      "msg" => "Hello from /paciente [PUT]"
-    ]);
+  public function update(Request $request)
+  {
+    // Verificamos si los parámetros del nuevo paciente son válidos
+    $verify_parameters = $this->verify_add_new_paciente_parameters($request);
+    if ($verify_parameters instanceof JsonResponse) {
+      return $verify_parameters;
+    }
+
+    // Construimos la url de la api correspondiente para modificar los datos de un paciente
+    $paciente_id = $request->id;
+    $pacientes_api = $this->get_pacientes_api();
+    $pacientes_api.= $paciente_id;
+
+    // Verificamos si el paciente a modificar existe mediante su id
+    $paciente_to_update = Http::get($pacientes_api);
+    if(empty($paciente_to_update->json())) {
+      return $this->get_paciente_not_found_response();
+    }
+    
+    // Enviamos la petición [PUT] a JSONPLACEHOLDER y obtenemos el response
+    $paciente_http_body_parameters = $this->get_paciente_http_body($request);
+    $response = $paciente_http_body_parameters->put($pacientes_api);
+
+    return new JsonResponse($response->json());
   }
 
-  private function get_paciente_http_body(Request $request) {
+  private function get_paciente_http_body(Request $request)
+  {
     return Http::withBody(json_encode([
       "id" => intval($request->get('id')),
       "nombres" => $request->get('nombres'),
@@ -125,8 +146,8 @@ class PacienteController extends Controller
   private function get_pacientes_api(Request $request = null)
   {
     $pacientes_url = getenv('JSON_PLACE_HOLDER_URL') . '/pacientes/';
-    
-    if(!isset($request)) {
+
+    if (!isset($request)) {
       return $pacientes_url;
     }
 
@@ -145,7 +166,7 @@ class PacienteController extends Controller
   private function verify_add_new_paciente_parameters(Request $request)
   {
     $parameters = $request->all();
-    if (empty($parameters)) {
+    if (empty($parameters) || empty($request->id)) {
       return $this->get_invalid_paciente_parameters_response();
     }
 
@@ -163,5 +184,11 @@ class PacienteController extends Controller
     return new JsonResponse([
       "msg" => "Los datos del paciente son incorrectos o no se han proporcionado"
     ], Response::HTTP_BAD_REQUEST);
+  }
+
+  function get_paciente_not_found_response() {
+    return new JsonResponse([
+      "msg" => "Paciente no encontrado"
+    ], Response::HTTP_NOT_FOUND);
   }
 }
