@@ -22,8 +22,15 @@ Route::get('/generateToken', function(Request $request) {
   ]);
 });
 
+/**
+ * Este endpoint se encarga de manejar todas las peticiones [GET] e información
+ * de los pacientes del hospital, se requiere deuna autenticación de tipo
+ * API KEY, el valor del token debe ser proporcionado mediante la clave api_key.
+ * 
+ * @return JsonResponse
+ */
 Route::get('/paciente', function(Request $request) {
   return new JsonResponse([
     "Hello from /paciente [GET]"
   ]);
-});
+})->middleware(Authenticate::class);
