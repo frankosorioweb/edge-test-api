@@ -42,7 +42,7 @@ Route::get('/paciente/{id?}', [
  * 
  * @return JsonResponse
  */
-Route::post('paciente', [
+Route::post('/paciente', [
   PacienteController::class,
   'addNew'
 ])->middleware(Authenticate::class);
@@ -54,7 +54,19 @@ Route::post('paciente', [
  * 
  * @return JsonResponse
  */
-Route::put('paciente', [
+Route::put('/paciente', [
   PacienteController::class,
   'update'
+])->middleware(Authenticate::class);
+
+/**
+ * Este endpoint permite eliminar a un paciente, a partir de su id enviado como parémetro en el path
+ * se requiere deuna autenticación de tipo API KEY, el valor del token
+ * debe ser proporcionado mediante la clave api_key.
+ * 
+ * @return JsonResponse
+ */
+Route::delete('/paciente/{id?}', [
+  PacienteController::class,
+  'delete'
 ])->middleware(Authenticate::class);

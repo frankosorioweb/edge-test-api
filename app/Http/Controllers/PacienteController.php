@@ -99,6 +99,18 @@ class PacienteController extends Controller
     return new JsonResponse($response->json());
   }
 
+  /**
+   * El endpoint /paciente [DELETE] se utiliza para comunicarse con esta función y actuar de controlador
+   * 
+   * @return JsonResponse
+   */
+  public function delete(Request $request)
+  {
+    return new JsonResponse([
+      "msg" => "Hello from /paciente [DELETE]"
+    ]);
+  }
+
   private function get_paciente_http_body(Request $request)
   {
     return Http::withBody(json_encode([
